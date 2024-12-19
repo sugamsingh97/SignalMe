@@ -7,6 +7,8 @@ using SignalMe.Client.Pages;
 using SignalMe.Components;
 using SignalMe.Components.Account;
 using SignalMe.Data;
+using Microsoft.AspNetCore.ResponseCompression;
+using SignalMe.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,7 +44,17 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
+builder.Services.AddSignalR();
+
+builder.Services.AddResponseCompression(opts =>
+{
+    opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
+        ["application/octet-stream"]);
+});
+
 var app = builder.Build();
+
+app.UseResponseCompression();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -69,4 +81,5 @@ app.MapRazorComponents<App>()
 // Add additional endpoints required by the Identity /Account Razor components.
 app.MapAdditionalIdentityEndpoints();
 
+app.MapHub<ChatHub>("/chathub");
 app.Run();
