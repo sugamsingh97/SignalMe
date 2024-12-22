@@ -1,0 +1,35 @@
+﻿<MudPaper Elevation="0" class="d-flex flex-row justify-end mx-4 my-1" style="align-self:flex-end">
+    <MudPaper Elevation="0" class="d-flex flex-column align-center" style="align-self: center;">
+        <MudToggleIconButton @bind-Toggled="LikedSender"
+                             Size="Size.Small"
+                             Icon="@Icons.Material.Rounded.FavoriteBorder"
+                             ToggledIcon="@Icons.Material.Rounded.Favorite"
+                             ToggledColor="@Color.Error"
+                             title="@(LikedSender ? "On" : "Off")" />
+
+        <span>@(LikedSender ? "1" : "")</span>
+    </MudPaper>
+
+    <MudPaper Elevation="0"
+              style="background: #cedfff;
+                 border-radius: 14px;
+                 max-width: 80%;
+                 width: fit-content;
+                 "
+              Class="pa-3 ma-4">
+
+        <MudText Typo="Typo.body2">@MessageContent</MudText>
+        <MudPaper Elevation="0" style="background: none; align-items: self-end;" class="d-flex justify-end">
+            <MudText Typo="Typo.body2" style="font-size: small; color: #4242427a; font-weight: 400;">10:45 AM</MudText>
+            <MudIcon Icon="@Icons.Material.Rounded.Done" style="font-size: 1.25rem; fill: #4242427a; margin-bottom: 2px;" Title="Favorite" />
+            <MudIcon Icon="@Icons.Material.Rounded.DoneAll" style="font-size: 1.25rem; color:#00C853; margin-bottom: 2px;" Title="API" />
+        </MudPaper>
+
+    </MudPaper>
+</MudPaper>
+
+@code {
+    public bool LikedSender { get; set; }
+    [Parameter]
+    public string MessageContent { get; set; }
+}

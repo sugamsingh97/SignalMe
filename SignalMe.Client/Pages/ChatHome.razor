@@ -7,7 +7,96 @@
 
 <PageTitle>Chat</PageTitle>
 
-<div class="form-group">
+
+<MudGrid style="height: calc(100vh - 64px);" Spacing="0">
+    <MudItem lg="2" md="3" xs="5" class="chatlist ">
+        <MudPaper Elevation="0" Outlined="false" Square="true" class="py-2 pr-3">
+            <MudAppBar Dense="true" Gutters="false" Elevation="0" class="my-appbar" Fixed="false">
+                <MudMenu AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+                    <ActivatorContent>
+                        <MudIconButton style="margin-left: 16px;" class="appbar-icon mr-2" Icon="@Icons.Material.Rounded.Person" />
+                    </ActivatorContent>
+                    <ChildContent>
+                        <MudMenuItem>Profile</MudMenuItem>
+                        <MudMenuItem>Contact List</MudMenuItem>
+                        <MudMenuItem>Settings</MudMenuItem>
+                        <MudMenuItem>Sign Out</MudMenuItem>
+                    </ChildContent>
+                </MudMenu>
+                <MudTextField class="search" Margin="Margin.Dense" Underline="false" @bind-Value="Search" Placeholder="Search..." Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
+                <MudIconButton class="appbar-icon ml-2" Icon="@Icons.Material.Outlined.Edit" />
+            </MudAppBar>
+            <MudPaper Elevation="0" Class="ml-4 d-flex flex-row align-baseline" >
+                <MudText Style="font-weight: 500;">Chats</MudText>
+                <MudSpacer/>
+                <MudBadge Content="100" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
+                    <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
+                </MudBadge>
+            </MudPaper>
+            <MudDivider />            
+            <ChatIListItem/>
+            <ChatIListItem/>
+            <ChatIListItem />
+        </MudPaper>
+    </MudItem>
+    <MudItem lg="10" md="9" xs="7" class="chat-item">
+        <MudPaper Elevation="0" Outlined="false" Square="true" class="d-flex mud-content">
+            <MudIconButton class="chat-nav-arrow" Icon="@Icons.Material.Filled.KeyboardArrowLeft" />
+            <MudDivider Vertical="true" FlexItem="true" />
+            <MudIconButton class="chat-nav-arrow" Icon="@Icons.Material.Filled.KeyboardArrowRight" />
+            <MudSpacer />
+            <MudIconButton class="chat-nav-arrow" Icon="@Icons.Material.Filled.Settings" />
+        </MudPaper>
+        <MudDivider />
+        <ChatHeader />
+        <MudDivider />
+        <ChatMessages/>
+               
+        <MudDivider />
+        <ChatInput/>
+    </MudItem>
+</MudGrid>
+<style>     
+     .mud-content {
+         padding: 8px 12px;
+
+     }
+     .chatlist {
+         border-right: 1px solid #0000001e;
+     }
+     .search {
+         border: 1px solid #0000001e;
+         border-radius: 124px;
+         padding-left: 10px;
+         padding-right: 4px;
+         padding-top: 4px;
+     }
+     .icon-button {
+         height: 34px;
+         border: 1px solid #0000001e;
+         display: flex;
+         border-radius: 124px;
+         justify-content: center;
+         align-content: center;
+     }
+
+    .my-appbar {
+         background-color: transparent !important;
+         z-index: 1000;
+     }
+    .appbar-icon {
+         height: 33px;
+         width: 33px;
+         border: 1px solid #0000001e;
+    }
+    .chat-nav-arrow {
+         height: 16px;
+         width: 16px;
+    }
+</style>
+
+@* This is code for the SignalR *@
+@* <div class="form-group">
     <label>
         User:
         <input @bind="userInput" />
@@ -28,14 +117,14 @@
     {
         <li>@message</li>
     }
-</ul>
+</ul> *@
 
 @code {
     private HubConnection? hubConnection;
     private List<string> messages = [];
     private string? userInput;
     private string? messageInput;
-
+    public string Search { get; set; }
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()

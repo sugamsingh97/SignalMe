@@ -1,0 +1,32 @@
+﻿<MudPaper Elevation="0" class="d-flex flex-row mx-4 my-1">
+    <MudAvatar Class="mr-2" Size="Size.Medium" Color="Color.Primary" Variant="Variant.Outlined">A</MudAvatar>
+    <MudPaper Elevation="0"
+              style="background: #f5f5f5;
+                 border-radius: 14px;
+                 max-width: 80%;
+                 width: fit-content;
+                 align-self:flex-start"
+              Class="pa-3 mr-4">
+        <MudText Typo="Typo.body2">@MessageContent</MudText>
+        <MudPaper Elevation="0" style="background: none; align-items: self-end;" class="d-flex justify-end">
+            <MudText Typo="Typo.body2" style="font-size: small; color: #4242427a; font-weight: 400;">10:45 AM</MudText>
+        </MudPaper>
+    </MudPaper>
+    <MudPaper Elevation="0" class="d-flex flex-column align-center" style="align-self: center;">
+        <MudToggleIconButton @bind-Toggled="LikedReceiver"
+                             Size="Size.Small"
+                             Icon="@Icons.Material.Rounded.FavoriteBorder"
+                             ToggledIcon="@Icons.Material.Rounded.Favorite"
+                             ToggledColor="@Color.Error"
+                             title="@(LikedReceiver ? "On" : "Off")" />
+
+        <span>@(LikedReceiver ? "1" : "")</span>
+    </MudPaper>
+</MudPaper>
+
+@code {
+    public bool LikedReceiver { get; set; }
+
+    [Parameter]
+    public string MessageContent { get; set; }
+}

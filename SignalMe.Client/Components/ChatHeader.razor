@@ -1,0 +1,34 @@
+﻿<MudPaper Elevation="0"
+          style="border-radius: 14px;"
+          Class="pa-3 ma-1 d-flex align-center">
+
+    <MudAvatar Size="Size.Large" Variant="Variant.Outlined" Color="Color.Primary">A</MudAvatar>
+
+    <MudPaper Elevation="0" style="background: none; width: -webkit-fill-available" class="d-flex flex-column justify-end ml-3">
+        <MudPaper Elevation="0" class="d-flex align-end " style="background: none; margin-bottom: 2px;">
+            <MudText Typo="Typo.body2" style="font-weight: 600;">Adam Smith</MudText>
+        </MudPaper>
+        <MudPaper Elevation="0" class="d-flex" style="background: none; width: -webkit-fill-available; justify-content: space-between">
+            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">+33659784156</MudText>
+        </MudPaper>
+    </MudPaper>
+    <MudPaper Elevation="0" style="background: none;" class="d-flex flex-row">
+        <MudIconButton Icon="@Icons.Material.Outlined.Call" aria-label="delete" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Videocam" aria-label="delete" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Info" aria-label="delete" />
+    </MudPaper>
+</MudPaper>
+
+<style>
+    .truncate-text {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-height: 3em; /* Adjust according to your line height */
+    }
+</style>
+@code {
+
+}

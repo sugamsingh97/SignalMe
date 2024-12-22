@@ -1,0 +1,28 @@
+﻿<MudPaper Outlined="false" Elevation="0"
+          style="border-radius: 14px;"
+          Class="pa-3 ma-1 d-flex align-center">
+    <MudIconButton Icon="@Icons.Material.Rounded.AddCircleOutline"
+                   Size="Size.Medium"
+                   Color="Color.Primary" />
+
+    <MudTextField T="string"
+                  Lines="1"
+                  Placeholder="Type your message..."
+                  Underline="false"
+                  AutoGrow
+                  Text="@sampleText"
+                  Adornment="Adornment.End"
+                  AdornmentIcon="@Icons.Material.Rounded.Send"
+                  AdornmentColor="Color.Primary"
+                  OnAdornmentClick="SendMessage"
+                  />
+</MudPaper>
+
+
+@code {
+    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+    public void SendMessage()
+    {
+        
+    }
+}
