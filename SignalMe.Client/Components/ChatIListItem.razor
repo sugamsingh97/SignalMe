@@ -2,21 +2,27 @@
           style="border-radius: 14px;"
           Class="pa-3 ma-1 d-flex align-center hover-bg-blue">
 
-    <MudAvatar Size="Size.Large" Variant="Variant.Outlined" Color="Color.Primary">A</MudAvatar>
-
+    <MudAvatar Size="Size.Large" Variant="Variant.Filled">
+        <MudIcon style="fill: #ffffff" Icon="@Icons.Material.Rounded.Person" />
+    </MudAvatar>
     <MudPaper Elevation="0" style="background: none; width: -webkit-fill-available" class="d-flex flex-column justify-end ml-3">
         <MudPaper Elevation="0" class="d-flex align-end " style="background: none; margin-bottom: 2px;">
-            <MudText Typo="Typo.body2" style="font-weight: 600;">Silver Fox</MudText>
+            <MudText Typo="Typo.body2" Class="mr-1" style="font-weight: 600;">Silver Fox</MudText>         
+            <MudIcon Icon="@Icons.Material.TwoTone.LocalFireDepartment" Class="mr-1" Size="Size.Small" Color="Color.Warning" />
+            <MudText Typo="Typo.caption" style="font-size: x-small; font-weight: 500;">321</MudText>
             <MudSpacer />
-            <MudText Typo="Typo.caption" style="font-size: x-small;">11/12/2024</MudText>
+            <MudText Typo="Typo.caption" style="font-size: xx-small; font-weight: 100;">@CurrentDate.ToString("dd/MM/yy")</MudText>
         </MudPaper>
         <MudPaper Elevation="0" class="d-flex" style="background: none; height: 42px; width: -webkit-fill-available; justify-content: space-between">
             <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">Do you want massage bg? €200 for 30min. </MudText>
-            <MudIcon Icon="@Icons.Material.Filled.Circle" Style="font-size: x-small;" Size="Size.Small" Color="Color.Error" />
+            <MudBadge Content="100" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
+
+            </MudBadge>
+            @* <MudIcon Icon="@Icons.Material.Filled.Circle" Style="font-size: x-small;" Size="Size.Small" Color="Color.Error" /> *@
         </MudPaper>
     </MudPaper>
 </MudPaper>
-
+<MudDivider/>
 <style>
 .truncate-text {
     display: -webkit-box;
@@ -34,5 +40,6 @@
 
 
 @code {
+    DateTime CurrentDate = DateTime.Now;
 
 }

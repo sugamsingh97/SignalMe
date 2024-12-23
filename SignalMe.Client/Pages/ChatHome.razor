@@ -27,16 +27,43 @@
                 <MudIconButton class="appbar-icon ml-2" Icon="@Icons.Material.Outlined.Edit" />
             </MudAppBar>
             <MudPaper Elevation="0" Class="ml-4 d-flex flex-row align-baseline" >
-                <MudText Style="font-weight: 500;">Chats</MudText>
+                <MudChip Size="Size.Small" T="string" Variant="Variant.Outlined"
+                         Color="@((activeContent == 1) ? Color.Primary : Color.Default)"
+                         class="@((activeContent == 1) ? "active-button" : "")"
+                         OnClick="@(() => HandleClick(1))">
+                    Chats
+                </MudChip>
+                <MudChip Size="Size.Small" T="string" Variant="Variant.Outlined"
+                         Color="@((activeContent == 2) ? Color.Primary : Color.Default)"
+                         class="@((activeContent == 2) ? "active-button" : "")"
+                         OnClick="@(() => HandleClick(2))">
+                    Contact
+                </MudChip>
                 <MudSpacer/>
                 <MudBadge Content="100" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
-                    <MudIcon Size="Size.Small" Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
+                    <MudIconButton OnClick="@(() => HandleClick(1))" Size="Size.Small" Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
                 </MudBadge>
             </MudPaper>
-            <MudDivider />            
-            <ChatIListItem/>
-            <ChatIListItem/>
-            <ChatIListItem />
+            <MudDivider />
+            @switch (activeContent)
+            {
+                case 1:
+                    <ChatIListItem />
+                    <ChatIListItem />
+                    <ChatIListItem />
+                    break;
+                case 2:
+                    <ContactListItem />
+                    <ContactListItem />
+                    <ContactListItem />
+                    <ContactListItem />
+                    <ContactListItem />
+                    <ContactListItem />
+                    <ContactListItem />
+
+                    break;
+            }
+            
         </MudPaper>
     </MudItem>
     <MudItem lg="10" md="9" xs="7" class="chat-item">
@@ -93,6 +120,9 @@
          height: 16px;
          width: 16px;
     }
+    .active-button {
+        background-color: #594ae20f;
+    }
 </style>
 
 @* This is code for the SignalR *@
@@ -120,6 +150,12 @@
 </ul> *@
 
 @code {
+    private int activeContent = 1;
+   
+    private void HandleClick(int contentId)
+    {
+        activeContent = contentId;
+    }
     private HubConnection? hubConnection;
     private List<string> messages = [];
     private string? userInput;
