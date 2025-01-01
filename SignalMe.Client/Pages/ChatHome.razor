@@ -53,6 +53,7 @@
                     <ChatIListItem />
                     break;
                 case 2:
+                    <SearchUserToAdd/>
                     <ContactListItem />
                     <ContactListItem />
                     <ContactListItem />
@@ -95,7 +96,7 @@
          border: 1px solid #0000001e;
          border-radius: 124px;
          padding-left: 10px;
-         padding-right: 4px;
+         padding-right: 8px;
          padding-top: 4px;
      }
      .icon-button {
@@ -150,6 +151,8 @@
 </ul> *@
 
 @code {
+    public List<AppUser>? AppUsers { get; set; }
+
     private int activeContent = 1;
    
     private void HandleClick(int contentId)
@@ -160,7 +163,7 @@
     private List<string> messages = [];
     private string? userInput;
     private string? messageInput;
-    public string Search { get; set; }
+    public string? Search { get; set; }
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
@@ -175,6 +178,8 @@
         });
 
         await hubConnection.StartAsync();
+
+        await GetUsers();
     }
 
     private async Task Send()
@@ -195,4 +200,16 @@
             await hubConnection.DisposeAsync();
         }
     }
+
+    // this gets users
+    private async Task GetUsers()
+    {
+        if (hubConnection is not null)
+        {
+            AppUsers = await hubConnection.InvokeAsync<List<AppUser>>("GetUserList");
+            StateHasChanged();
+        }
+    }
+
+
 }

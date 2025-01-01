@@ -74,6 +74,24 @@ namespace SignalMe.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppUserContacts",
+                columns: table => new
+                {
+                    OwnerId = table.Column<string>(type: "TEXT", nullable: false),
+                    ContactList = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppUserContacts", x => x.OwnerId);
+                    table.ForeignKey(
+                        name: "FK_AppUserContacts_AspNetUsers_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AspNetUserClaims",
                 columns: table => new
                 {
@@ -199,6 +217,9 @@ namespace SignalMe.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "AppUserContacts");
+
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
 

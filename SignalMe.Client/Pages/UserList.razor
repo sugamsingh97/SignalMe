@@ -1,0 +1,51 @@
+﻿@page "/userlist"
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+
+<h3>UserList</h3>
+
+<button class="btn btn-primary" @onclick="LoadUsers">Load Users</button>
+
+<ul>
+    @foreach (var user in allRegUsers)
+    {
+        <li>
+            <div>@user.UserId</div>
+            <div>@user.Email</div>
+        </li>
+    }
+</ul>
+
+@code {
+    private HubConnection? hubConnection;
+    List<AppUser> allRegUsers = new List<AppUser>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        await hubConnection.StartAsync();
+    }
+
+    private async Task LoadUsers()
+    {
+        if (hubConnection is not null)
+        {
+            allRegUsers = await hubConnection.InvokeAsync<List<AppUser>>("GetUserList");
+            StateHasChanged();
+        }
+    }
+
+    public bool IsConnected =>
+        hubConnection?.State == HubConnectionState.Connected;
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

@@ -11,8 +11,8 @@ using SignalMe.Data;
 namespace SignalMe.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241218131621_MessageMigration")]
-    partial class MessageMigration
+    [Migration("20241226213027_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -148,6 +148,20 @@ namespace SignalMe.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
+                {
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContactList")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OwnerId");
+
+                    b.ToTable("AppUserContacts");
+                });
+
             modelBuilder.Entity("SignalMe.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -218,36 +232,6 @@ namespace SignalMe.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SignalMe.Data.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("ReceiverId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ReceiverId");
-
-                    b.HasIndex("SenderId");
-
-                    b.ToTable("Messages");
-                });
-
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -299,23 +283,13 @@ namespace SignalMe.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SignalMe.Data.Message", b =>
+            modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.HasOne("SignalMe.Data.ApplicationUser", "Receiver")
-                        .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                    b.HasOne("SignalMe.Data.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("SignalMe.Data.AppUserContact", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("SignalMe.Data.ApplicationUser", "Sender")
-                        .WithMany()
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Receiver");
-
-                    b.Navigation("Sender");
                 });
 #pragma warning restore 612, 618
         }

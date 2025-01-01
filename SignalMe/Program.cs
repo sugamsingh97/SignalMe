@@ -9,6 +9,7 @@ using SignalMe.Components.Account;
 using SignalMe.Data;
 using Microsoft.AspNetCore.ResponseCompression;
 using SignalMe.Hubs;
+using SignalMe.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,7 +24,10 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityUserAccessor>();
 builder.Services.AddScoped<IdentityRedirectManager>();
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
-
+builder.Services.AddTransient<UserService>();
+builder.Services.AddTransient<MessageService>();
+builder.Services.AddTransient<ConversationService>();
+builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>
     {
@@ -43,7 +47,6 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
     .AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
 builder.Services.AddSignalR();
 
 builder.Services.AddResponseCompression(opts =>

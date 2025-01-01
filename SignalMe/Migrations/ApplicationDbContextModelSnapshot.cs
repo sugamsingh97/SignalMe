@@ -145,6 +145,20 @@ namespace SignalMe.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
+                {
+                    b.Property<string>("OwnerId")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ContactList")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("OwnerId");
+
+                    b.ToTable("AppUserContacts");
+                });
+
             modelBuilder.Entity("SignalMe.Data.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -215,17 +229,20 @@ namespace SignalMe.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("SignalMe.Data.Contact", b =>
+            modelBuilder.Entity("SignalMe.Data.Conversation", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FriendId")
+                    b.Property<DateTime?>("ReceiverChatDeleteDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReceiverId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("TimeStamp")
+                    b.Property<DateTime?>("UserChatDeleteDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("UserId")
@@ -234,11 +251,11 @@ namespace SignalMe.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("FriendId");
+                    b.HasIndex("ReceiverId");
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Contacts");
+                    b.ToTable("Conversations");
                 });
 
             modelBuilder.Entity("SignalMe.Data.Message", b =>
@@ -251,20 +268,20 @@ namespace SignalMe.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("ReceiverId")
+                    b.Property<int?>("ConversationId")
                         .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SenderId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime>("TimeStamp")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("ReceiverId");
+                    b.HasIndex("ConversationId");
 
                     b.HasIndex("SenderId");
 
@@ -322,11 +339,20 @@ namespace SignalMe.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("SignalMe.Data.Contact", b =>
+            modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.HasOne("SignalMe.Data.ApplicationUser", "Friend")
+                    b.HasOne("SignalMe.Data.ApplicationUser", null)
+                        .WithOne()
+                        .HasForeignKey("SignalMe.Data.AppUserContact", "OwnerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SignalMe.Data.Conversation", b =>
+                {
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Receiver")
                         .WithMany()
-                        .HasForeignKey("FriendId")
+                        .HasForeignKey("ReceiverId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -336,17 +362,17 @@ namespace SignalMe.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Friend");
+                    b.Navigation("Receiver");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("SignalMe.Data.Message", b =>
                 {
-                    b.HasOne("SignalMe.Data.ApplicationUser", "Receiver")
+                    b.HasOne("SignalMe.Data.Conversation", "Conversation")
                         .WithMany()
-                        .HasForeignKey("ReceiverId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SignalMe.Data.ApplicationUser", "Sender")
@@ -355,7 +381,7 @@ namespace SignalMe.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("Receiver");
+                    b.Navigation("Conversation");
 
                     b.Navigation("Sender");
                 });

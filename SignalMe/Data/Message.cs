@@ -6,19 +6,19 @@ namespace SignalMe.Data
     public class Message
     {
         public int Id { get; set; }
-        public DateTime TimeStamp { get; set; }
 
         [Required]
         public string? Content { get; set; }
+        public DateTime CreatedDate { get; set; }
 
         [ForeignKey("Sender")]
         [Required]
         public string? SenderId { get; set; }
-        public virtual ApplicationUser? Sender { get; set; }
+        public virtual ApplicationUser? Sender { get; set; }        
 
-        [ForeignKey("Receiver")]
+        [ForeignKey("Conversation")]
         [Required]
-        public string? ReceiverId { get; set; }
-        public virtual ApplicationUser? Receiver { get; set; }
+        public int? ConversationId { get; set; }
+        public virtual Conversation? Conversation { get; set; }
     }
 }
