@@ -11,7 +11,7 @@
               Class="pa-3 mr-4">
         <MudText Typo="Typo.body2">@MessageContent</MudText>
         <MudPaper Elevation="0" style="background: none; align-items: self-end;" class="d-flex justify-end">
-            <MudText Typo="Typo.body2" style="font-size: small; color: #4242427a; font-weight: 400;">10:45 AM</MudText>
+            <MudText Typo="Typo.body2" style="font-size: small; color: #4242427a; font-weight: 400;">@SendDate.ToString("hh:mm tt")</MudText>
         </MudPaper>
     </MudPaper>
     <MudPaper Elevation="0" class="d-flex flex-column align-center" style="align-self: center;">
@@ -30,5 +30,8 @@
     public bool LikedReceiver { get; set; }
 
     [Parameter]
-    public string? MessageContent { get; set; }
+    public string? MessageContent { get; set; }    
+
+    [Parameter]
+    public DateTime SendDate { get; set; }
 }

@@ -22,5 +22,6 @@ namespace SignalMe.Client.Models
         [Required]
         public int? ConversationId { get; set; }
         public virtual ClientConversation? Conversation { get; set; }
+
     }
 }

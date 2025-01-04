@@ -5,7 +5,7 @@ namespace SignalMe.Client.Models
 {
     public class ClientConversation
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("User")]
         [Required]

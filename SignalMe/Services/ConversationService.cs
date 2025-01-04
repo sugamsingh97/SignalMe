@@ -37,6 +37,8 @@ namespace SignalMe.Services
             return conversation ?? await CreateNewConversation(loggedInUser, receiverId);
         }
 
+
+
         /// <summary>
         /// This serches if the conversation already exist between the user and the receiver.
         /// </summary>
@@ -126,7 +128,7 @@ namespace SignalMe.Services
             var message = new Message
             {
                 Content = content,
-                CreatedDate = DateTime.UtcNow,
+                CreatedDate = DateTime.Now,
                 SenderId = senderId,
                 ConversationId = conversationId
             };
@@ -136,6 +138,44 @@ namespace SignalMe.Services
 
             return message;
         }
+
+        /// <summary>
+        /// This gets all the messages
+        /// </summary>
+        /// <param name="receiverId"></param>
+        /// <returns></returns>
+        public async Task<List<ClientMessage>> GetConversationMessages(string receiverId)
+        {
+            var loggedInUser = await GetLoggedinUserId();
+            var conversation = await FindExistingConversation(loggedInUser, receiverId);
+
+            if (conversation == null)
+                return new List<ClientMessage>();     
+
+            List<ClientMessage> _messages = new List<ClientMessage>();
+
+            List<Message> messages = await _db.Messages
+                .Where(m => m.ConversationId == conversation.Id)               
+                .OrderBy(m => m.CreatedDate)
+                .ToListAsync();
+
+            foreach (var message in messages) 
+            {
+                ClientMessage m = new ClientMessage
+                {
+                    Id = message.Id,
+                    CreatedDate = message.CreatedDate,
+                    Content = message.Content,
+                    ConversationId = message.ConversationId,
+                    SenderId = message.SenderId
+                };
+
+                _messages.Add(m);
+            }
+
+            return _messages;
+        }
+
 
         // This gets the logged in user
         public async Task<string> GetLoggedinUserId()
@@ -162,6 +202,19 @@ namespace SignalMe.Services
             return _conversation;
         }
 
+        public ClientMessage ConvertToClientMessage (Message message)
+        {
+            ClientMessage clientMessage = new ClientMessage()
+            {
+                Id= message.Id,
+                Content = message.Content,
+                CreatedDate = message.CreatedDate,
+                SenderId = message.SenderId,
+                ConversationId = message.ConversationId
+              
+            };
+            return clientMessage;
+        }
     }
 
 }

@@ -1,16 +1,24 @@
-﻿<MudPaper Elevation="0" Class="chat-list" Outlined="false" style="height: 70vh;">    
-    <ReceiverBubble MessageContent="Hey Man how are you?" />
-    <SenderBubble MessageContent="I am good. How about you?" />
-    <ReceiverBubble MessageContent="I am good too. Looking to hav fun " />
-    <ReceiverBubble MessageContent="Are you down for some hot sessions?" />    
-    <SenderBubble MessageContent="Year sure. I am craving some hot sessions with sexy guys." />
-    <ReceiverBubble MessageContent="Ok" />
-    <ReceiverBubble MessageContent="I also have a friend who might join if you dont mind. I also have a friend who might join if you dont mind. I also have a friend who might join if you dont mind." />
-    <ReceiverBubble MessageContent="I also have a friend who might join if you dont mind." />
-    <SenderBubble MessageContent="Even better. see you soon!" />
-    <SenderBubble MessageContent="We will go Wild" />
-    <SenderBubble MessageContent="hm" />
-    <SenderBubble MessageContent="share the address i willl buy some liquore and be at your place very soon! share the address i willl buy some liquore and be at your place very soon! share the address i willl buy some liquore and be at your place very soon! share the address i willl buy some liquore and be at your place very soon! share the address i willl buy some liquore and be at your place very soon!" />
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IJSRuntime JSRuntime
+@implements IAsyncDisposable
+
+<MudPaper Elevation="0" Class="chat-list" Outlined="false" style="height: 70vh;">
+    @if (messages != null)
+    {
+        @foreach (var message in messages)
+        {
+            @if (message.SenderId == ReceiverId)
+            {
+                <ReceiverBubble MessageContent="@message.Content" SendDate="@message.CreatedDate" />
+            }
+            else
+            {
+                <SenderBubble MessageContent="@message.Content" SendDate="@message.CreatedDate" />
+            }
+        }
+    }
 </MudPaper>
 
 <style>
@@ -18,9 +26,83 @@
         display: flex;
         flex-direction: column;
         height: 70vh;
-        overflow-y: auto; /* Enables vertical scrolling */
+        overflow-y: auto;
     }
 </style>
-@code {
 
+@code {
+    [Parameter]
+    public string ReceiverId { get; set; } = "";
+    private HubConnection hubConnection;
+    public List<ClientMessage> messages = new();
+    private int currentConversationId;
+
+    private async Task ScrollToBottom()
+    {
+        await JSRuntime.InvokeVoidAsync("scrollToBottom", "chat-list");
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(ReceiverId))
+        {
+            if (hubConnection == null)
+            {
+                hubConnection = new HubConnectionBuilder()
+                    .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+                    .Build();
+
+                hubConnection.On<ClientMessage>("ReceiveMessage", async (message) =>
+                {
+                    if (message.ConversationId == currentConversationId)
+                    {
+                        messages.Add(message);
+                        await InvokeAsync(async () =>
+                        {
+                            StateHasChanged();
+                            await ScrollToBottom();
+                        });
+                    }
+                });
+                await hubConnection.StartAsync();
+            }
+            await LoadMessages();
+        }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("eval", @"
+                window.scrollToBottom = function (className) {
+                    const element = document.getElementsByClassName(className)[0];
+                    if (element) {
+                        element.scrollTop = element.scrollHeight;
+                    }
+                }
+            ");
+        }
+    }
+    private async Task LoadMessages()
+    {
+        if (hubConnection is not null)
+        {
+            List<ClientMessage> _messages = new();
+            _messages = await hubConnection.InvokeAsync<List<ClientMessage>>("GetConversationMessages", ReceiverId);
+            var conversation = await hubConnection.InvokeAsync<ClientConversation>("GetOrCreateConversation", ReceiverId);
+            currentConversationId = conversation.Id;
+            messages = _messages;
+            StateHasChanged();
+            await ScrollToBottom();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
 }

@@ -1,28 +1,67 @@
-﻿<MudPaper Outlined="false" Elevation="0"
-          style="border-radius: 14px;"
-          Class="pa-3 ma-1 d-flex align-center">
-    <MudIconButton Icon="@Icons.Material.Rounded.AddCircleOutline"
-                   Size="Size.Medium"
-                   Color="Color.Primary" />
+﻿@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-    <MudTextField T="string"
-                  Lines="1"
-                  Placeholder="Type your message..."
-                  Underline="false"
-                  AutoGrow
-                  Text="@sampleText"
-                  Adornment="Adornment.End"
-                  AdornmentIcon="@Icons.Material.Rounded.Send"
-                  AdornmentColor="Color.Primary"
-                  OnAdornmentClick="SendMessage"
-                  />
-</MudPaper>
+@if (!string.IsNullOrEmpty(ReceiverId))
+{
+    <MudPaper Outlined="false" Elevation="0"
+              style="border-radius: 14px;"
+              Class="pa-3 ma-1 d-flex align-center">
+        <MudIconButton Icon="@Icons.Material.Rounded.AddCircleOutline"
+                       Size="Size.Medium"
+                       Color="Color.Primary" />
+        <MudTextField T="string"
+                      Lines="1"
+                      Placeholder="Type your message..."
+                      Underline="false"
+                      AutoGrow
+                      @bind-Value="@messageInput"
+                      OnKeyDown="@OnKeyDown"
+                      Immediate="true"
+                      Adornment="Adornment.End"
+                      AdornmentIcon="@Icons.Material.Rounded.Send"
+                      AdornmentColor="Color.Primary"
+                      OnAdornmentClick="SendMessage" />
+    </MudPaper>
+}
+@code {    
+    private HubConnection? hubConnection;  
+    [Parameter]
+    public string ReceiverId { get; set; } = "";
+    string messageInput = "";
+  
 
-
-@code {
-    string sampleText = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-    public void SendMessage()
+    protected override async Task OnInitializedAsync()
     {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+            .Build();  
+
+        await hubConnection.StartAsync();       
+    }
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await SendMessage();
+        }
         
+    }
+    private async Task SendMessage()
+    {
+        if (hubConnection is not null && !string.IsNullOrEmpty(ReceiverId) && !string.IsNullOrEmpty(messageInput))
+        {
+            await hubConnection.SendAsync("SendMessage", ReceiverId, messageInput);
+            messageInput = string.Empty;
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
     }
 }

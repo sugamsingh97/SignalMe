@@ -11,8 +11,8 @@ using SignalMe.Data;
 namespace SignalMe.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241226213027_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20250104185945_InitialMig")]
+    partial class InitialMig
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -150,16 +150,25 @@ namespace SignalMe.Migrations
 
             modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ContactList")
+                    b.Property<string>("ContactId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("OwnerId");
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("AppUserContacts");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("SignalMe.Data.ApplicationUser", b =>
@@ -232,6 +241,65 @@ namespace SignalMe.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("SignalMe.Data.Conversation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime?>("ReceiverChatDeleteDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("ReceiverId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("UserChatDeleteDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReceiverId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("SignalMe.Data.Message", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("ConversationId")
+                        .IsRequired()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("SenderId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -285,11 +353,59 @@ namespace SignalMe.Migrations
 
             modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.HasOne("SignalMe.Data.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("SignalMe.Data.AppUserContact", "OwnerId")
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Contact")
+                        .WithMany()
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("SignalMe.Data.Conversation", b =>
+                {
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Receiver")
+                        .WithMany()
+                        .HasForeignKey("ReceiverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("SignalMe.Data.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Receiver");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("SignalMe.Data.Message", b =>
+                {
+                    b.HasOne("SignalMe.Data.Conversation", "Conversation")
+                        .WithMany()
+                        .HasForeignKey("ConversationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Sender")
+                        .WithMany()
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Sender");
                 });
 #pragma warning restore 612, 618
         }

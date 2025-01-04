@@ -8,10 +8,10 @@
 
     <MudPaper Elevation="0" style="background: none; width: -webkit-fill-available" class="d-flex flex-column justify-end ml-3">
         <MudPaper Elevation="0" class="d-flex align-end " style="background: none; margin-bottom: 2px;">
-            <MudText Typo="Typo.body2" style="font-weight: 600;">Adam Smith</MudText>
+            <MudText Typo="Typo.body2" style="font-weight: 600;">@FirstName @LastName</MudText>
         </MudPaper>
         <MudPaper Elevation="0" class="d-flex" style="background: none; width: -webkit-fill-available; justify-content: space-between">
-            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">+33659784156</MudText>
+            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">@PhoneNumber</MudText>
         </MudPaper>
     </MudPaper>
     <MudPaper Elevation="0" style="background: none;" class="d-flex flex-row">
@@ -32,5 +32,18 @@
     }
 </style>
 @code {
+    [Parameter]
+    public string UserId { get; set; }
 
+    [Parameter]
+    public string FirstName { get; set; }
+
+    [Parameter]
+    public string LastName { get; set; }
+
+    [Parameter]
+    public string PhoneNumber { get; set; }
+
+    [Parameter]
+    public string Email { get; set; }
 }

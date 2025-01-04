@@ -30,6 +30,21 @@
 
             <MudGrid>
                 <MudItem md="12">
+                    <MudStaticTextField For="@(() => Input.FirstName)" @bind-Value="Input.FirstName"
+                                        Label="First Name" Placeholder="John"
+                                        UserAttributes="@(new() { { "autocomplete", "given-name" }, { "aria-required", "true" } })" />
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Input.LastName)" @bind-Value="Input.LastName"
+                                        Label="Last Name" Placeholder="Doe"
+                                        UserAttributes="@(new() { { "autocomplete", "family-name" }, { "aria-required", "true" } })" />
+                </MudItem>
+                <MudItem md="12">
+                    <MudStaticTextField For="@(() => Input.PhoneNumber)" @bind-Value="Input.PhoneNumber"
+                                        Label="Phone Number" Placeholder="+1234567890"
+                                        UserAttributes="@(new() { { "autocomplete", "tel" }, { "aria-required", "true" } })" />
+                </MudItem>
+                <MudItem md="12">
                     <MudStaticTextField For="@(() => Input.Email)" @bind-Value="Input.Email"
                                         Label="Email" Placeholder="name@example.com"
                                         UserAttributes="@(new() { { "autocomplete", "true" }, { "aria-required", "true" } } )" />
@@ -58,6 +73,12 @@
 
 @code {
 
+
+
+
+
+
+
     private IEnumerable<IdentityError>? identityErrors;
 
     [SupplyParameterFromForm]
@@ -70,7 +91,12 @@
 
     public async Task RegisterUser(EditContext editContext)
     {
-        var user = CreateUser();       
+        var user = CreateUser();
+
+        user.FirstName = Input.FirstName;
+        user.LasttName = Input.LastName;
+        user.PhoneNumber = Input.PhoneNumber;
+
         await UserStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
         var emailStore = GetEmailStore();
         await emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
@@ -80,21 +106,7 @@
         {
             identityErrors = result.Errors;
             return;
-        }
-
-        // Create a record for AppUserContact with an empty contact list
-
-        var appUserContact = new AppUserContact
-            {
-                OwnerId = user.Id,
-                ContactList = "[]" // Initialize to an empty JSON array
-
-            };
-        // Add and save the AppUserContact record
-
-        dbContext.AppUserContacts.Add(appUserContact);
-
-        await dbContext.SaveChangesAsync();
+        }             
 
         Logger.LogInformation("User created a new account with password.");
 
@@ -146,6 +158,21 @@
         [EmailAddress]
         [Display(Name = "Email")]
         public string Email { get; set; } = "";
+
+        [Required]
+        [Display(Name = "First Name")]
+        [StringLength(50, ErrorMessage = "First name cannot exceed 50 characters.")]
+        public string FirstName { get; set; } = "";
+
+        [Required]
+        [Display(Name = "Last Name")]
+        [StringLength(50, ErrorMessage = "Last name cannot exceed 50 characters.")]
+        public string LastName { get; set; } = "";
+
+        [Required]
+        [Phone]
+        [Display(Name = "Phone Number")]
+        public string PhoneNumber { get; set; } = "";
 
         [Required]
         [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 6)]

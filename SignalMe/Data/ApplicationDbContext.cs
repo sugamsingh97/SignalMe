@@ -8,23 +8,26 @@ namespace SignalMe.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
             
-        }
-
-        public DbSet<AppUserContact> AppUserContacts { get; set; }
+        }        
         public DbSet<Message> Messages { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
+
+        public DbSet<AppUserContact> Contacts { get; set; }
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
-            // Optionally, configure the relationships and keys if needed
+            // AppUserContact configuration
             builder.Entity<AppUserContact>()
-                .HasKey(c => c.OwnerId); // Configure OwnerId as primary key
+                .HasOne(c => c.Owner)
+                .WithMany()
+                .HasForeignKey(c => c.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             builder.Entity<AppUserContact>()
-                .HasOne<ApplicationUser>()
-                .WithOne()
-                .HasForeignKey<AppUserContact>(c => c.OwnerId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(c => c.Contact)
+                .WithMany()
+                .HasForeignKey(c => c.ContactId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Message configuration
             builder.Entity<Message>()

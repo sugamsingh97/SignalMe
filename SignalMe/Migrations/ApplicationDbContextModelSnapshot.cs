@@ -147,16 +147,25 @@ namespace SignalMe.Migrations
 
             modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.Property<string>("OwnerId")
-                        .HasColumnType("TEXT");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
 
-                    b.Property<string>("ContactList")
+                    b.Property<string>("ContactId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.HasKey("OwnerId");
+                    b.Property<string>("OwnerId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
-                    b.ToTable("AppUserContacts");
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Contacts");
                 });
 
             modelBuilder.Entity("SignalMe.Data.ApplicationUser", b =>
@@ -341,11 +350,21 @@ namespace SignalMe.Migrations
 
             modelBuilder.Entity("SignalMe.Data.AppUserContact", b =>
                 {
-                    b.HasOne("SignalMe.Data.ApplicationUser", null)
-                        .WithOne()
-                        .HasForeignKey("SignalMe.Data.AppUserContact", "OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Contact")
+                        .WithMany()
+                        .HasForeignKey("ContactId")
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("SignalMe.Data.ApplicationUser", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("Owner");
                 });
 
             modelBuilder.Entity("SignalMe.Data.Conversation", b =>

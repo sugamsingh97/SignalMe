@@ -54,14 +54,19 @@
                     break;
                 case 2:
                     <SearchUserToAdd/>
-                    <ContactListItem />
-                    <ContactListItem />
-                    <ContactListItem />
-                    <ContactListItem />
-                    <ContactListItem />
-                    <ContactListItem />
-                    <ContactListItem />
-
+                    <MudList T="string">
+                        @foreach (var user in AppUsers)
+                        {
+                            <MudListItem class="my-2" Style="border-radius: 14px;" OnClick="() => UpdateChatArea(user)">
+                            <ContactListItem FirstName="@user.FirstName"
+                                             LastName="@user.LastName"
+                                             PhoneNumber="@user.PhoneNumber"
+                                             Email="@user.Email"/>
+                            </MudListItem>
+                        
+                        }
+                    </MudList>
+                   
                     break;
             }
             
@@ -76,12 +81,17 @@
             <MudIconButton class="chat-nav-arrow" Icon="@Icons.Material.Filled.Settings" />
         </MudPaper>
         <MudDivider />
-        <ChatHeader />
+        <ChatHeader 
+            Email="@HeaderInfo.Email"
+            UserId="@HeaderInfo.UserId"
+            FirstName="@HeaderInfo.FirstName"
+            LastName="@HeaderInfo.LastName"
+            PhoneNumber="@HeaderInfo.PhoneNumber"
+            />
         <MudDivider />
-        <ChatMessages/>
-               
+        <ChatMessages ReceiverId="@HeaderInfo.UserId"/>               
         <MudDivider />
-        <ChatInput/>
+        <ChatInput ReceiverId="@HeaderInfo.UserId" />
     </MudItem>
 </MudGrid>
 <style>     
@@ -126,35 +136,23 @@
     }
 </style>
 
-@* This is code for the SignalR *@
-@* <div class="form-group">
-    <label>
-        User:
-        <input @bind="userInput" />
-    </label>
-</div>
-<div class="form-group">
-    <label>
-        Message:
-        <input @bind="messageInput" size="50" />
-    </label>
-</div>
-<button @onclick="Send" disabled="@(!IsConnected)">Send</button>
-
-<hr>
-
-<ul id="messagesList">
-    @foreach (var message in messages)
-    {
-        <li>@message</li>
-    }
-</ul> *@
-
 @code {
-    public List<AppUser>? AppUsers { get; set; }
-
+    public List<AppUser>? AppUsers { get; set; } = new();
+    public AppUser HeaderInfo { get; set; } = new()
+    {      
+        FirstName = "No Chat Selected",        
+    };
     private int activeContent = 1;
-   
+
+    public async Task UpdateChatArea(AppUser user)
+    {
+        HeaderInfo.UserId = user.UserId;
+        HeaderInfo.FirstName = user.FirstName;
+        HeaderInfo.LastName = user.LastName;
+        HeaderInfo.Email = user.Email;
+        HeaderInfo.PhoneNumber = user.PhoneNumber;
+    }
+
     private void HandleClick(int contentId)
     {
         activeContent = contentId;

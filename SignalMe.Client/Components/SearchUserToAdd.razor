@@ -1,19 +1,9 @@
 ﻿@inject SignalMeServices SignalMeServices;
-<MudAutocomplete T="AppUser"
-                 class="search"
-                 Underline="false"
-                 Placeholder="Search Users"
-                 @bind-Value="selectedUser"
-                 SearchFunc="@SearchUsers"
-                 ToStringFunc="@(user => user == null ? null : $"{user.FirstName} {user.LastName} ({user.Email})")"
-                 AdornmentIcon="@Icons.Material.Outlined.PersonSearch">
-    <ItemTemplate Context="user">
-        <MudItem Style="width:100%" @onclick="()=>ContactSelect(user)">
-            <MudText>@user.FirstName @user.LastName @user.Email</MudText>
-        </MudItem>
-    </ItemTemplate>
-</MudAutocomplete>
+@inject IDialogService DialogService;
 
+<MudPaper Elevation="0" Class="mt-1 d-flex justify-end">
+    <MudIconButton Onclick="()=>OpenDialogAsync()" Icon="@Icons.Material.Outlined.PersonAdd" Color="Color.Primary" Size="Size.Small" />
+</MudPaper>
 <style>
     .search {
         border: 1px solid #0000001e;
@@ -26,33 +16,22 @@
 </style>
 
 @code {
-    public List<AppUser> users { get; set; } = new();
-    private AppUser selectedUser;
 
-    protected async override Task OnInitializedAsync()
+   
+
+    private async Task OpenDialogAsync()
     {
-        //users = await ProjectService.GetUserList();
-        users = await SignalMeServices.GetUserList();
-    }
+        var options = new DialogOptions
+            {
+                CloseOnEscapeKey = true,
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
 
-    private async Task<IEnumerable<AppUser>> SearchUsers(string searchText, CancellationToken cancellationToken)
-    {
-        // Simulate some async work to demonstrate cancellation
-        await Task.Delay(50, cancellationToken);
+        var dialogResponse = await DialogService.ShowAsync<CreateContactDialog>("Create Contact", options);
 
-        return string.IsNullOrEmpty(searchText)
-            ? users
-            : users.Where(user =>
-                user.FirstName.Contains(searchText, StringComparison.InvariantCultureIgnoreCase) ||
-                user.LastName.Contains(searchText, StringComparison.InvariantCultureIgnoreCase) ||
-                user.Email.Contains(searchText, StringComparison.InvariantCultureIgnoreCase));
-    }
-
-    private async Task ContactSelect(AppUser _user)
-    {
-        // UserResponse newContact = new();
-        // newContact = _user;
-        // await ProjectService.AddNewContact(newContact);
+        var result = await dialogResponse.Result;
+        //PriorityInputModel priorityInput = new();
     }
 }
-

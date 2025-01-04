@@ -25,15 +25,34 @@ namespace SignalMe.Services
                 UserId = user.Id,
                 FirstName = user.FirstName,
                 LastName = user.LasttName,
-                Email = user?.Email
+                Email = user?.Email,
+                PhoneNumber = user?.PhoneNumber,
             }).ToList();
             return _users;
         }
 
         public async Task<string> GetLoggedinUserId()
         {
-            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId =  _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             return userId ?? string.Empty;
         }
+
+        public async Task<AppUser?> SearchUserByEmail(string email)
+        {
+            var user = await _db.Users
+                .FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower());
+
+            if (user == null) return null;
+
+            return new AppUser
+            {
+                UserId = user.Id,
+                FirstName = user.FirstName,
+                LastName = user.LasttName,
+                Email = user.Email,
+                PhoneNumber = user.PhoneNumber
+            };
+        }
+
     }
 }

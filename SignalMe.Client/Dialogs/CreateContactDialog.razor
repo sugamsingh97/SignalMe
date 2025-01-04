@@ -1,0 +1,117 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@implements IAsyncDisposable
+
+<MudDialog>
+    <TitleContent>
+        Search
+    </TitleContent>
+    <DialogContent>
+        <MudTextField class="search"
+                      Margin="Margin.Dense"
+                      Underline="false"
+                      Immediate="true"
+                      @bind-Value="Email"
+                      Placeholder="Search..."
+                      Adornment="Adornment.End"
+                      OnKeyDown="EnterPressed"
+                      OnAdornmentClick="Search"
+                      AdornmentIcon="@Icons.Material.Filled.Search" />
+
+        @* @if (UserFound != null && !string.IsNullOrEmpty(UserFound.Email))
+        {
+            <MudText>Found: @UserFound.FirstName @UserFound.LastName (@UserFound.Email)</MudText>
+        } *@
+        @switch (UserExists)
+        {
+            case 0:
+                <MudText Style="font-weight:200;" Typo="Typo.caption">search by email</MudText>
+                break;
+
+            case 1:
+                <MudPaper Elevation="0" Class="d-flex flex-column justify-start">
+                    <MudText Class="d-flex align-center" Typo="Typo.caption">This user exists. Add to contact.<MudIcon style="height:16px; width:16px;" Icon="@Icons.Material.Rounded.Check" Color="Color.Success" /></MudText>
+                    <MudButton Variant="Variant.Filled"
+                               Style="border-radius:32px;"
+                    EndIcon="@Icons.Material.Outlined.PersonAdd"
+                               Color="Color.Primary">
+                        Add User
+                    </MudButton>
+                </MudPaper>
+                break;
+            case 2:
+                <MudText Class="d-flex justify-start" Typo="Typo.caption">This user does not exist.<MudIcon style="height:16px; width:16px;" Icon="@Icons.Material.Rounded.ErrorOutline" Color="Color.Error" /></MudText>
+                break;
+        }
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .search {
+        border: 1px solid #0000001e;
+        border-radius: 124px;
+        padding-left: 10px;
+        padding-right: 8px;
+        padding-top: 4px;
+    }
+</style>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+    private HubConnection hubConnection;
+    private AppUser UserFound { get; set; } = new();
+    private string Email { get; set; }
+
+    public int UserExists { get; set; } = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .Build();
+
+        await hubConnection.StartAsync();
+    }    
+
+    private async Task EnterPressed(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await Search();
+        }
+
+    }
+
+    private async Task Search()
+    {
+        if (!string.IsNullOrEmpty(Email))
+        {
+            UserFound = await hubConnection.InvokeAsync<AppUser>("SearchUser", Email);
+
+            if (UserFound != null)
+            {
+                UserExists = 1;
+            }
+            else
+            {
+                UserExists = 2;
+            }
+        }
+
+    }
+
+    private void Cancel() => MudDialog.Cancel();
+
+    public async ValueTask DisposeAsync()
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.DisposeAsync();
+        }
+    }
+}

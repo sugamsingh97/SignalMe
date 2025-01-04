@@ -1,45 +1,123 @@
-﻿@page "/userlist"
+﻿@page "/testchat"
+@rendermode InteractiveWebAssembly
 @using Microsoft.AspNetCore.SignalR.Client
-@inject NavigationManager NavigationManager
+@inject NavigationManager Navigation
+@implements IAsyncDisposable
 
-<h3>UserList</h3>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Users List</h3>
+            <div class="user-list">
+                @if (AppUsers != null)
+                {
+                    @foreach (var user in AppUsers)
+                    {
+                        <div class="user-item">
+                            <span>Name: @user.Email</span>
+                            <br />
+                            <span>ID: @user.UserId</span>
+                            <hr />
+                        </div>
+                    }
+                }
+            </div>
+        </div>
 
-<button class="btn btn-primary" @onclick="LoadUsers">Load Users</button>
+        <div class="col-md-8">
+            <h3>Test Chat</h3>
+            <div class="form-group">
+                <label>Receiver ID:</label>
+                <input @bind="selectedReceiverId" class="form-control" />
+            </div>
 
-<ul>
-    @foreach (var user in allRegUsers)
-    {
-        <li>
-            <div>@user.UserId</div>
-            <div>@user.Email</div>
-        </li>
+            <div class="form-group">
+                <label>Message:</label>
+                <input @bind="messageInput" class="form-control" />
+            </div>
+
+            <button class="btn btn-primary mt-2" @onclick="SendMessage">Send Message</button>
+
+            <div class="messages mt-4">
+                <h4>Messages:</h4>
+                @foreach (var msg in messages)
+                {
+                    <div class="message-item">
+                        <strong>From: @msg.SenderId</strong>
+                        <p>@msg.Content</p>
+                        <small>@msg.CreatedDate</small>
+                        <hr />
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .user-list {
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 400px;
+        overflow-y: auto;
     }
-</ul>
+
+    .user-item {
+        padding: 5px;
+    }
+
+    .messages {
+        border: 1px solid #ddd;
+        padding: 10px;
+        height: 400px;
+        overflow-y: auto;
+    }
+
+    .message-item {
+        padding: 5px;
+    }
+</style>
 
 @code {
     private HubConnection? hubConnection;
-    List<AppUser> allRegUsers = new List<AppUser>();
+    private List<ClientMessage> messages = new();
+    private string? selectedReceiverId;
+    private string? messageInput;
+    public List<AppUser>? AppUsers { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+            .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
+        hubConnection.On<ClientMessage>("ReceiveMessage", (message) =>
+        {
+            messages.Add(message);
+            InvokeAsync(StateHasChanged);
+        });
+
         await hubConnection.StartAsync();
+        await GetUsers();
     }
 
-    private async Task LoadUsers()
+    private async Task SendMessage()
     {
-        if (hubConnection is not null)
+        if (hubConnection is not null && !string.IsNullOrEmpty(selectedReceiverId) && !string.IsNullOrEmpty(messageInput))
         {
-            allRegUsers = await hubConnection.InvokeAsync<List<AppUser>>("GetUserList");
-            StateHasChanged();
+            await hubConnection.SendAsync("SendMessage", selectedReceiverId, messageInput);
+            messageInput = string.Empty;
         }
     }
 
-    public bool IsConnected =>
-        hubConnection?.State == HubConnectionState.Connected;
+    private async Task GetUsers()
+    {
+        if (hubConnection is not null)
+        {
+            AppUsers = await hubConnection.InvokeAsync<List<AppUser>>("GetUserList");
+            StateHasChanged();
+        }
+    }
 
     public async ValueTask DisposeAsync()
     {
