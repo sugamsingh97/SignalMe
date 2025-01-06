@@ -27,6 +27,7 @@ builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenti
 builder.Services.AddTransient<UserService>();
 builder.Services.AddTransient<MessageService>();
 builder.Services.AddTransient<ConversationService>();
+builder.Services.AddTransient<ContactService>();
 builder.Services.AddControllers();
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication(options =>

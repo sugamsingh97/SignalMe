@@ -25,12 +25,12 @@
                       OnAdornmentClick="SendMessage" />
     </MudPaper>
 }
-@code {    
+@code {
     private HubConnection? hubConnection;  
     [Parameter]
     public string ReceiverId { get; set; } = "";
     string messageInput = "";
-  
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -46,10 +46,14 @@
         {
             await SendMessage();
         }
-        
+
     }
     private async Task SendMessage()
     {
+        if (string.IsNullOrWhiteSpace(messageInput))
+        {
+            return;
+        }
         if (hubConnection is not null && !string.IsNullOrEmpty(ReceiverId) && !string.IsNullOrEmpty(messageInput))
         {
             await hubConnection.SendAsync("SendMessage", ReceiverId, messageInput);

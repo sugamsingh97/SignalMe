@@ -54,5 +54,10 @@ namespace SignalMe.Services
             };
         }
 
+        public async Task<bool> UserExists(string userId)
+        {
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Id == userId);
+            return user.Id != "" ? true : false;
+        }
     }
 }

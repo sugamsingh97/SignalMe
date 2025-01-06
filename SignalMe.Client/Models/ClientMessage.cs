@@ -23,5 +23,8 @@ namespace SignalMe.Client.Models
         public int? ConversationId { get; set; }
         public virtual ClientConversation? Conversation { get; set; }
 
+        public bool? IsReadByReceiver { get; set; }
+
+        public bool Liked { get; set; } = false;
     }
 }

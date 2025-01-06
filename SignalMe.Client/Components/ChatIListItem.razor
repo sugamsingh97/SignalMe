@@ -1,23 +1,31 @@
 ﻿<MudPaper Elevation="0"
-          style="border-radius: 14px; background-color: none;"
-          Class="pa-3 ma-1 d-flex align-center hover-bg-blue">
+          style="border-radius: 14px; background: none;"
+          Class="px-3 py-1 ma-1 d-flex align-center hover-bg-blue">
 
-    <MudAvatar Size="Size.Large" Variant="Variant.Filled">
+    @* <MudAvatar Size="Size.Large" Variant="Variant.Filled">
         <MudIcon style="fill: #ffffff" Icon="@Icons.Material.Rounded.Person" />
-    </MudAvatar>
+    </MudAvatar> *@
+    <MudBadge Visible="@isOnline" Origin="Origin.BottomRight" Color="Color.Success" Overlap="true" Bordered="true">
+        <MudAvatar Variant="Variant.Filled" Style="height:44px; width:44px;" Color="Color.Tertiary">@FirstName[0]</MudAvatar>
+    </MudBadge>
     <MudPaper Elevation="0" style="background: none; width: -webkit-fill-available" class="d-flex flex-column justify-end ml-3">
         <MudPaper Elevation="0" class="d-flex align-end " style="background: none; margin-bottom: 2px;">
-            <MudText Typo="Typo.body2" Class="mr-1" style="font-weight: 600;">Silver Fox</MudText>         
-            <MudIcon Icon="@Icons.Material.TwoTone.LocalFireDepartment" Class="mr-1" Size="Size.Small" Color="Color.Warning" />
-            <MudText Typo="Typo.caption" style="font-size: x-small; font-weight: 500;">321</MudText>
+            <MudText Typo="Typo.body2" Class="mr-1" style="font-weight: 600;">@FirstName @LastName</MudText>
+            @if (Streak > 1)
+            {
+                <MudIcon Icon="@Icons.Material.TwoTone.LocalFireDepartment" Class="mr-1" Size="Size.Small" Color="Color.Warning" />
+                <MudText Typo="Typo.caption" style="font-size: x-small; font-weight: 500;">@Streak</MudText>
+            }            
             <MudSpacer />
-            <MudText Typo="Typo.caption" style="font-size: xx-small; font-weight: 100;">@CurrentDate.ToString("dd/MM/yy")</MudText>
+            <MudText Typo="Typo.caption" style="font-size: xx-small; font-weight: 100;">@LastMessageDate?.ToString("dd/MM/yy")</MudText>
         </MudPaper>
         <MudPaper Elevation="0" class="d-flex" style="background: none; height: 42px; width: -webkit-fill-available; justify-content: space-between">
-            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">Do you want massage bg? €200 for 30min. </MudText>
-            <MudBadge Content="100" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
-
-            </MudBadge>
+            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">@LastMessage</MudText>
+            @if (UnreadCount > 0)
+            {
+                <MudBadge Content="@UnreadCount" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
+                </MudBadge>
+            }           
             @* <MudIcon Icon="@Icons.Material.Filled.Circle" Style="font-size: x-small;" Size="Size.Small" Color="Color.Error" /> *@
         </MudPaper>
     </MudPaper>
@@ -25,7 +33,7 @@
 <style>
 .truncate-text {
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 2 !important;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -38,7 +46,36 @@
 </style>
 
 
-@code {
-    DateTime CurrentDate = DateTime.Now;
+@code {   
 
+    [Parameter]
+    public string? FirstName { get; set; }
+
+    [Parameter]
+    public string? LastName { get; set; }
+
+    [Parameter]
+    public int? Streak { get; set; }
+
+    [Parameter]
+    public int? UnreadCount { get; set; }
+
+    [Parameter]
+    public string? LastMessage { get; set; }
+
+    [Parameter]
+    public DateTime? LastMessageDate { get; set; }
+
+
+    private bool isOnline;
+    private Color avatarColor;
+
+    protected override void OnParametersSet()
+    {
+        Random random = new Random();
+        isOnline = random.Next(2) == 1;
+
+        //Color[] colors = { Color.Primary, Color.Secondary, Color.Tertiary };
+        //avatarColor = colors[random.Next(colors.Length)];
+    }
 }

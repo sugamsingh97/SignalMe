@@ -1,8 +1,9 @@
 ﻿@inject SignalMeServices SignalMeServices;
 @inject IDialogService DialogService;
 
-<MudPaper Elevation="0" Class="mt-1 d-flex justify-end">
-    <MudIconButton Onclick="()=>OpenDialogAsync()" Icon="@Icons.Material.Outlined.PersonAdd" Color="Color.Primary" Size="Size.Small" />
+<MudPaper Elevation="0" Class="mt-1 d-flex justify-space-between align-baseline">
+    <MudText style="font-weight: 200;" Typo="Typo.h5">Contacts</MudText>
+    <MudIconButton Onclick="()=>OpenDialogAsync()" Icon="@Icons.Material.Rounded.Add" Color="Color.Primary" Size="Size.Medium" />
 </MudPaper>
 <style>
     .search {
@@ -15,9 +16,7 @@
     }
 </style>
 
-@code {
-
-   
+@code {  
 
     private async Task OpenDialogAsync()
     {

@@ -1,15 +1,12 @@
 ﻿<MudPaper Elevation="0" class="d-flex flex-row mx-4 my-1 justify-end">
     <MudPaper Elevation="0" class="d-flex flex-column align-center" style="align-self: center;">
-        <MudToggleIconButton @bind-Toggled="LikedSender"
-                             Size="Size.Small"
-                             Icon="@Icons.Material.Rounded.FavoriteBorder"
-                             ToggledIcon="@Icons.Material.Rounded.Favorite"
-                             ToggledColor="@Color.Error"
-                             title="@(LikedSender ? "On" : "Off")" />
-
-        <span>@(LikedSender ? "1" : "")</span>
+        @if (LikedStatus== true)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite"
+                           Color="Color.Error"
+                           Size="Size.Small" />
+        }           
     </MudPaper>
-
     <MudPaper Elevation="0"
               style="background: #cedfff;
                  border-radius: 14px;
@@ -21,18 +18,45 @@
         <MudText Typo="Typo.body2">@MessageContent</MudText>
         <MudPaper Elevation="0" style="background: none; align-items: self-end;" class="d-flex justify-end">
             <MudText Typo="Typo.body2" style="font-size: small; color: #4242427a; font-weight: 400;">@SendDate.ToString("hh:mm tt")</MudText>
-            @* <MudIcon Icon="@Icons.Material.Rounded.Done" style="font-size: 1.25rem; fill: #4242427a; margin-bottom: 2px;" Title="Favorite" /> *@
-            <MudIcon Icon="@Icons.Material.Rounded.DoneAll" style="font-size: 1.25rem; color:#00C853; margin-bottom: 2px;" Title="API" />
+            @if (isRead)
+            {
+                <MudIcon Icon="@Icons.Material.Rounded.DoneAll" style="font-size: 1.25rem; color:#00C853; margin-bottom: 2px;" Title="API" />
+            }
+            else
+            {
+                <MudIcon Icon="@Icons.Material.Rounded.Done" style="font-size: 1.25rem; fill: #4242427a; margin-bottom: 2px;" Title="Favorite" />
+            }
+
+
         </MudPaper>
 
     </MudPaper>
 </MudPaper>
 
 @code {
-    public bool LikedSender { get; set; }
+    [Parameter]
+    public bool LikedStatus { get; set; } = false;
+
+    private bool isRead { get; set; }
+
     [Parameter]
     public string? MessageContent { get; set; }
 
     [Parameter]
     public DateTime SendDate { get; set; }
+
+    [Parameter]
+    public bool? IsReadByReceiver { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        isRead = IsReadByReceiver ?? false;
+    }
+
+    // You can keep OnInitializedAsync if needed for other initializations
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
 }

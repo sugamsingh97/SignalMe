@@ -26,7 +26,7 @@
                 <MudTextField class="search" Margin="Margin.Dense" Underline="false" @bind-Value="Search" Placeholder="Search..." Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Filled.Search" />
                 <MudIconButton class="appbar-icon ml-2" Icon="@Icons.Material.Outlined.Edit" />
             </MudAppBar>
-            <MudPaper Elevation="0" Class="ml-4 d-flex flex-row align-baseline" >
+            <MudPaper Elevation="0" Class="ml-4 d-flex flex-row align-baseline">
                 <MudChip Size="Size.Small" T="string" Variant="Variant.Outlined"
                          Color="@((activeContent == 1) ? Color.Primary : Color.Default)"
                          class="@((activeContent == 1) ? "active-button" : "")"
@@ -39,7 +39,7 @@
                          OnClick="@(() => HandleClick(2))">
                     Contact
                 </MudChip>
-                <MudSpacer/>
+                <MudSpacer />
                 <MudBadge Content="100" Color="Color.Error" Overlap="true" Class="mx-6 my-4">
                     <MudIconButton OnClick="@(() => HandleClick(1))" Size="Size.Small" Icon="@Icons.Material.Filled.Email" Color="Color.Default" />
                 </MudBadge>
@@ -48,28 +48,46 @@
             @switch (activeContent)
             {
                 case 1:
-                    <ChatIListItem />
-                    <ChatIListItem />
-                    <ChatIListItem />
+                    <MudList T="string">
+                        @foreach (var conversation in Conversations)
+                        {
+                            @if (!string.IsNullOrEmpty(conversation.LastMessage))
+                            {
+
+                                <MudListItem class="my-1 px-0" Style="border-radius: 14px;" OnClick="() => ChatClicked(conversation)">
+                                    <ChatIListItem FirstName="@conversation.FriendFirstName"
+                                                   LastName="@conversation.FriendLastName"
+                                                   Streak="@conversation.Streak"
+                                                   UnreadCount="@conversation.UnreadCount"
+                                                   LastMessage="@conversation.LastMessage"
+                                                   LastMessageDate="@conversation.LastMessageDate" />
+                                </MudListItem>
+                            }
+                        }
+
+                    </MudList>
+
                     break;
                 case 2:
-                    <SearchUserToAdd/>
+                    <SearchUserToAdd />
+                    <MudDivider />
+
                     <MudList T="string">
-                        @foreach (var user in AppUsers)
+                        @foreach (var contact in Contacts)
                         {
-                            <MudListItem class="my-2" Style="border-radius: 14px;" OnClick="() => UpdateChatArea(user)">
-                            <ContactListItem FirstName="@user.FirstName"
-                                             LastName="@user.LastName"
-                                             PhoneNumber="@user.PhoneNumber"
-                                             Email="@user.Email"/>
+                            <MudListItem class="my-1" Style="border-radius: 14px;" OnClick="() => UpdateChatArea(contact)">
+                                <ContactListItem FirstName="@contact.ContactFirstName"
+                                                 LastName="@contact.ContactLastName"
+                                                 PhoneNumber="@contact.ContactTelephone"
+                                                 Email="@contact.ContactEmail" />
                             </MudListItem>
-                        
+
                         }
                     </MudList>
-                   
+
                     break;
             }
-            
+
         </MudPaper>
     </MudItem>
     <MudItem lg="10" md="9" xs="7" class="chat-item">
@@ -81,76 +99,95 @@
             <MudIconButton class="chat-nav-arrow" Icon="@Icons.Material.Filled.Settings" />
         </MudPaper>
         <MudDivider />
-        <ChatHeader 
-            Email="@HeaderInfo.Email"
-            UserId="@HeaderInfo.UserId"
-            FirstName="@HeaderInfo.FirstName"
-            LastName="@HeaderInfo.LastName"
-            PhoneNumber="@HeaderInfo.PhoneNumber"
-            />
+        <ChatHeader Email="@HeaderInfo.Email"
+                    UserId="@HeaderInfo.UserId"
+                    FirstName="@HeaderInfo.FirstName"
+                    LastName="@HeaderInfo.LastName"
+                    PhoneNumber="@HeaderInfo.PhoneNumber" />
         <MudDivider />
-        <ChatMessages ReceiverId="@HeaderInfo.UserId"/>               
+        <ChatMessages ReceiverId="@HeaderInfo.UserId" />
         <MudDivider />
         <ChatInput ReceiverId="@HeaderInfo.UserId" />
     </MudItem>
 </MudGrid>
-<style>     
-     .mud-content {
-         padding: 8px 12px;
+<style>
+    .mud-content {
+        padding: 8px 12px;
+    }
 
-     }
-     .chatlist {
-         border-right: 1px solid #0000001e;
-     }
-     .search {
-         border: 1px solid #0000001e;
-         border-radius: 124px;
-         padding-left: 10px;
-         padding-right: 8px;
-         padding-top: 4px;
-     }
-     .icon-button {
-         height: 34px;
-         border: 1px solid #0000001e;
-         display: flex;
-         border-radius: 124px;
-         justify-content: center;
-         align-content: center;
-     }
+    .chatlist {
+        border-right: 1px solid #0000001e;
+    }
+
+    .search {
+        border: 1px solid #0000001e;
+        border-radius: 124px;
+        padding-left: 10px;
+        padding-right: 8px;
+        padding-top: 4px;
+    }
+
+    .icon-button {
+        height: 34px;
+        border: 1px solid #0000001e;
+        display: flex;
+        border-radius: 124px;
+        justify-content: center;
+        align-content: center;
+    }
 
     .my-appbar {
-         background-color: transparent !important;
-         z-index: 1000;
-     }
+        background-color: transparent !important;
+        z-index: 1000;
+    }
+
     .appbar-icon {
-         height: 33px;
-         width: 33px;
-         border: 1px solid #0000001e;
+        height: 33px;
+        width: 33px;
+        border: 1px solid #0000001e;
     }
+
     .chat-nav-arrow {
-         height: 16px;
-         width: 16px;
+        height: 16px;
+        width: 16px;
     }
+
     .active-button {
         background-color: #594ae20f;
     }
 </style>
 
 @code {
-    public List<AppUser>? AppUsers { get; set; } = new();
+    public List<ClientContact>? Contacts { get; set; } = new();
+    public List<ClientConversation> Conversations { get; set; } = new();
+
     public AppUser HeaderInfo { get; set; } = new()
-    {      
-        FirstName = "No Chat Selected",        
-    };
+        {
+            FirstName = "No Chat Selected",
+        };  
+
+
     private int activeContent = 1;
 
-    public async Task UpdateChatArea(AppUser user)
+    public async Task UpdateChatArea(ClientContact contact)
     {
-        HeaderInfo.UserId = user.UserId;
-        HeaderInfo.FirstName = user.FirstName;
-        HeaderInfo.LastName = user.LastName;
-        HeaderInfo.Email = user.Email;
-        HeaderInfo.PhoneNumber = user.PhoneNumber;
+        HeaderInfo.UserId = contact.UserId;
+        HeaderInfo.FirstName = contact.ContactFirstName;
+        HeaderInfo.LastName = contact.ContactLastName;
+        HeaderInfo.Email = contact.ContactEmail;
+        HeaderInfo.PhoneNumber = contact.ContactTelephone;
+    }
+
+    public async Task ChatClicked(ClientConversation _conversation)
+    {
+        HeaderInfo.UserId = _conversation.FriendId;
+        HeaderInfo.FirstName = _conversation.FriendFirstName;
+        HeaderInfo.LastName = _conversation.FriendLastName;
+        HeaderInfo.Email = _conversation.Email;
+        HeaderInfo.PhoneNumber = _conversation.PhoneNumber;
+
+        await ChangeReadStatus(_conversation.Id);
+        //await SetActiveConversation(_conversation.Id);
     }
 
     private void HandleClick(int contentId)
@@ -168,6 +205,12 @@
             .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
             .Build();
 
+        hubConnection.On("ConversationUpdated", async () =>
+      {
+      await GetAllConversations();
+      await InvokeAsync(StateHasChanged);
+      });
+
         hubConnection.On<string, string>("ReceiveMessage", (user, message) =>
         {
             var encodedMsg = $"{user}: {message}";
@@ -175,9 +218,32 @@
             InvokeAsync(StateHasChanged);
         });
 
+        hubConnection.On("ContactCreated", async () =>
+       {
+           await GetAllContacts();
+           await InvokeAsync(StateHasChanged);
+       });
+
+        // Existing initialization code...
+
+        hubConnection.On<int>("ConversationStatusChanged", async (conversationId) =>
+        {
+            // Update the local conversation list to reflect the active status
+            await GetAllConversations();
+            await InvokeAsync(StateHasChanged);
+        });
+
+        hubConnection.On<int>("ReadStatusChanged", async (conversationId) =>
+        {
+            // Update the local conversation list to reflect the new read status
+            await GetAllConversations();
+            await InvokeAsync(StateHasChanged);
+        });
+
         await hubConnection.StartAsync();
 
-        await GetUsers();
+        await GetAllContacts();
+        await GetAllConversations();
     }
 
     private async Task Send()
@@ -200,14 +266,36 @@
     }
 
     // this gets users
-    private async Task GetUsers()
+    private async Task GetAllContacts()
     {
         if (hubConnection is not null)
         {
-            AppUsers = await hubConnection.InvokeAsync<List<AppUser>>("GetUserList");
+            Contacts = await hubConnection.InvokeAsync<List<ClientContact>>("GetAllUserContacts");
             StateHasChanged();
         }
     }
 
+    public async Task GetAllConversations()
+    {
+        if (hubConnection is not null)
+        {
+            Conversations = await hubConnection.InvokeAsync<List<ClientConversation>>("GetAllConversation");
+            StateHasChanged();
+        }
+    }
 
+    public async Task SetActiveConversation(int conversationId)
+    {
+        if (hubConnection is not null)
+        {
+            await hubConnection.SendAsync("SetActiveConversation", conversationId);
+            StateHasChanged();
+        }
+    }
+
+    public async Task ChangeReadStatus(int conversationId)
+    {
+        await hubConnection.SendAsync("ChangeReadStatus", conversationId);
+        StateHasChanged();
+    }
 }

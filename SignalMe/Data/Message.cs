@@ -20,5 +20,9 @@ namespace SignalMe.Data
         [Required]
         public int? ConversationId { get; set; }
         public virtual Conversation? Conversation { get; set; }
+
+        public bool? IsReadByReceiver { get; set; } = false;
+
+        public bool Liked { get; set; } = false;
     }
 }

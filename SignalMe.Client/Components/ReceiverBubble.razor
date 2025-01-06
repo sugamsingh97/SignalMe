@@ -1,5 +1,8 @@
-﻿<MudPaper Elevation="0" class="d-flex flex-row mx-4 my-1">
-    <MudAvatar Class="mr-2" Size="Size.Medium" Variant="Variant.Filled">
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+
+<MudPaper Elevation="0" class="d-flex flex-row mx-4 my-1">
+    <MudAvatar Class="mr-2" Color="Color.Tertiary" Size="Size.Medium" Variant="Variant.Filled">
         <MudIcon style="fill: #ffffff" Icon="@Icons.Material.Rounded.Person" />
     </MudAvatar>
     <MudPaper Elevation="0"
@@ -15,23 +18,60 @@
         </MudPaper>
     </MudPaper>
     <MudPaper Elevation="0" class="d-flex flex-column align-center" style="align-self: center;">
-        <MudToggleIconButton @bind-Toggled="LikedReceiver"
+        <MudToggleIconButton Toggled="@LikedStatus"
+                             ToggledChanged="@HandleLikeToggle"
                              Size="Size.Small"
                              Icon="@Icons.Material.Rounded.FavoriteBorder"
                              ToggledIcon="@Icons.Material.Rounded.Favorite"
                              ToggledColor="@Color.Error"
-                             title="@(LikedReceiver ? "On" : "Off")" />
+                            />
 
-        <span>@(LikedReceiver ? "1" : "")</span>
+        
     </MudPaper>
 </MudPaper>
 
 @code {
-    public bool LikedReceiver { get; set; }
+    @code {
+        [Parameter]
+        public bool LikedStatus { get; set; } = false;
+        [Parameter]
+        public string? MessageContent { get; set; }
+        [Parameter]
+        public int? MessagedId { get; set; }
+        [Parameter]
+        public DateTime SendDate { get; set; }
+        [Parameter]
+        public int? ConversationId { get; set; }
 
-    [Parameter]
-    public string? MessageContent { get; set; }    
+        private HubConnection hubConnection;
 
-    [Parameter]
-    public DateTime SendDate { get; set; }
+        protected override async Task OnParametersSetAsync()
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+                .Build();
+
+            hubConnection.On<int>("LikeToggled", (conversationId) =>
+            {
+                if (conversationId == ConversationId)
+                {
+                    StateHasChanged();
+                }
+            });
+
+            await hubConnection.StartAsync();
+        }
+
+        private async Task HandleLikeToggle()
+        {
+            if (MessagedId.HasValue && ConversationId.HasValue)
+            {
+                await hubConnection.InvokeAsync("ToggleLike", MessagedId, ConversationId);
+                LikedStatus = !LikedStatus;
+            }
+        }
+    }
+
+
+      
 }

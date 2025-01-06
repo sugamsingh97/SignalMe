@@ -1,8 +1,10 @@
-﻿<MudPaper Elevation="0"
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+<MudPaper Elevation="0"
           style="border-radius: 14px;"
           Class="pa-3 ma-1 d-flex align-center">
 
-    <MudAvatar Size="Size.Large" Variant="Variant.Filled">
+    <MudAvatar Color="Color.Tertiary" Size="Size.Large" Variant="Variant.Filled">
         <MudIcon style="fill: #ffffff" Icon="@Icons.Material.Rounded.Person" />
     </MudAvatar>
 
@@ -11,13 +13,16 @@
             <MudText Typo="Typo.body2" style="font-weight: 600;">@FirstName @LastName</MudText>
         </MudPaper>
         <MudPaper Elevation="0" class="d-flex" style="background: none; width: -webkit-fill-available; justify-content: space-between">
-            <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text">@PhoneNumber</MudText>
+            @if (TypingStatus)
+            {
+                <MudText Typo="Typo.body2" Style="font-weight: 100;" Class="truncate-text"> Typing...</MudText>
+            }
         </MudPaper>
     </MudPaper>
     <MudPaper Elevation="0" style="background: none;" class="d-flex flex-row">
-        <MudIconButton Icon="@Icons.Material.Outlined.Call" aria-label="delete" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Videocam" aria-label="delete" />
-        <MudIconButton Icon="@Icons.Material.Outlined.Info" aria-label="delete" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Call" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Videocam" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Info" />
     </MudPaper>
 </MudPaper>
 
@@ -32,6 +37,7 @@
     }
 </style>
 @code {
+    public bool TypingStatus { get; set; } = false;
     [Parameter]
     public string UserId { get; set; }
 
@@ -46,4 +52,22 @@
 
     [Parameter]
     public string Email { get; set; }
+
+    private HubConnection hubConnection;
+    private int conversationId;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        if (!string.IsNullOrEmpty(UserId))
+        {
+            hubConnection = new HubConnectionBuilder()
+                .WithUrl(NavigationManager.ToAbsoluteUri("/chathub"))
+                .Build();
+
+            await hubConnection.StartAsync();
+
+            // Get conversation ID when component initializes
+            conversationId = await hubConnection.InvokeAsync<int>("GetOrCreateConversation", UserId);
+        }
+    }
 }

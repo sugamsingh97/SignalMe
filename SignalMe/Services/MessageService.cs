@@ -18,10 +18,6 @@ namespace SignalMe.Services
         }
 
        
-        public async Task<string> GetLoggedinUserId()
-        {
-            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            return userId ?? string.Empty;
-        }
+       
     }
 }

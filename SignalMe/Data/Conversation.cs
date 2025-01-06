@@ -18,6 +18,8 @@ namespace SignalMe.Data
         public string? ReceiverId { get; set; }
         public virtual ApplicationUser? Receiver { get; set; }
 
+        public bool? UserConversationIsActive { get; set; } = false;
+        public bool? ReceiverConversationIsActive { get; set; } = false;
         public DateTime? UserChatDeleteDate { get; set; }
 
         public DateTime? ReceiverChatDeleteDate { get; set; }

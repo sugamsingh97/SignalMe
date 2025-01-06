@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SignalMe.Data;
 
@@ -10,9 +11,11 @@ using SignalMe.Data;
 namespace SignalMe.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250105131024_MsgReadStatus")]
+    partial class MsgReadStatus
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.11");
@@ -247,18 +250,12 @@ namespace SignalMe.Migrations
                     b.Property<DateTime?>("ReceiverChatDeleteDate")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool?>("ReceiverConversationIsActive")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("ReceiverId")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime?>("UserChatDeleteDate")
                         .HasColumnType("TEXT");
-
-                    b.Property<bool?>("UserConversationIsActive")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -291,9 +288,6 @@ namespace SignalMe.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<bool?>("IsReadByReceiver")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<bool>("Liked")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SenderId")

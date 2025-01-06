@@ -11,14 +11,24 @@
         {
             @if (message.SenderId == ReceiverId)
             {
-                <ReceiverBubble MessageContent="@message.Content" SendDate="@message.CreatedDate" />
+                <ReceiverBubble 
+                    ConversationId="@currentConversationId"
+                    MessagedId="@message.Id"
+                    LikedStatus="@message.Liked"
+                    MessageContent="@message.Content" 
+                    SendDate="@message.CreatedDate" />
             }
             else
             {
-                <SenderBubble MessageContent="@message.Content" SendDate="@message.CreatedDate" />
+                <SenderBubble LikedStatus="@message.Liked"
+                    MessageContent="@message.Content" 
+                    SendDate="@message.CreatedDate"
+                    IsReadByReceiver="@message.IsReadByReceiver"
+                    />
             }
         }
     }
+
 </MudPaper>
 
 <style>
@@ -34,7 +44,7 @@
     [Parameter]
     public string ReceiverId { get; set; } = "";
     private HubConnection hubConnection;
-    public List<ClientMessage> messages = new();
+    public List<ClientMessage>? messages = new();
     private int currentConversationId;
 
     private async Task ScrollToBottom()
@@ -56,7 +66,10 @@
                 {
                     if (message.ConversationId == currentConversationId)
                     {
+                        
                         messages.Add(message);
+                        await TurnOnReadStatus();
+                        await LoadMessages();
                         await InvokeAsync(async () =>
                         {
                             StateHasChanged();
@@ -64,9 +77,36 @@
                         });
                     }
                 });
+
+                // New read status handler
+                hubConnection.On<int>("ReadStatusChanged", async (conversationId) =>
+                {
+                    if (conversationId == currentConversationId)
+                    {
+                        // foreach (var message in messages)
+                        // {
+                        //     message.IsReadByReceiver = true;
+                        // }
+                        await LoadMessages();
+                        await InvokeAsync(StateHasChanged);
+                    }
+                });
+                hubConnection.On<int>("LikeToggled", async (conversationId) =>
+                {
+                    if (conversationId == currentConversationId)
+                    {
+                        // foreach (var message in messages)
+                        // {
+                        //     message.IsReadByReceiver = true;
+                        // }
+                        await LoadMessages();
+                        await InvokeAsync(StateHasChanged);
+                    }
+                });
                 await hubConnection.StartAsync();
             }
             await LoadMessages();
+
         }
     }
 
@@ -90,12 +130,20 @@
         {
             List<ClientMessage> _messages = new();
             _messages = await hubConnection.InvokeAsync<List<ClientMessage>>("GetConversationMessages", ReceiverId);
-            var conversation = await hubConnection.InvokeAsync<ClientConversation>("GetOrCreateConversation", ReceiverId);
-            currentConversationId = conversation.Id;
+            int conversationId = await hubConnection.InvokeAsync<int>("GetOrCreateConversation", ReceiverId);
+            currentConversationId = conversationId;
             messages = _messages;
+            await TurnOnReadStatus();
             StateHasChanged();
             await ScrollToBottom();
         }
+    }
+
+    // a method that turns read status on to all the messages with this conversation
+    private async Task TurnOnReadStatus()
+    {
+        await hubConnection.InvokeAsync("ChangeReadStatus", currentConversationId);
+        StateHasChanged();
     }
 
     public async ValueTask DisposeAsync()

@@ -31,9 +31,11 @@
             case 1:
                 <MudPaper Elevation="0" Class="d-flex flex-column justify-start">
                     <MudText Class="d-flex align-center" Typo="Typo.caption">This user exists. Add to contact.<MudIcon style="height:16px; width:16px;" Icon="@Icons.Material.Rounded.Check" Color="Color.Success" /></MudText>
-                    <MudButton Variant="Variant.Filled"
+                    <MudButton OnClick="AddContact"
+                        Class="my-4"
+                        Variant="Variant.Filled"
                                Style="border-radius:32px;"
-                    EndIcon="@Icons.Material.Outlined.PersonAdd"
+                               EndIcon="@Icons.Material.Outlined.PersonAdd"
                                Color="Color.Primary">
                         Add User
                     </MudButton>
@@ -95,7 +97,7 @@
 
             if (UserFound != null)
             {
-                UserExists = 1;
+                UserExists = 1;                
             }
             else
             {
@@ -103,6 +105,15 @@
             }
         }
 
+    }
+
+    private async Task AddContact()
+    {
+        if (UserFound != null)
+        {
+            await hubConnection.InvokeAsync("CreateContact", UserFound.UserId);
+            MudDialog.Close();
+        }
     }
 
     private void Cancel() => MudDialog.Cancel();
