@@ -34,11 +34,11 @@ Experience enterprise-grade real-time communications powered by ASP.NET Core Sig
     > Find friends securely through email verification. The smart search system only allows connections with existing users.
 
 - **Streak System** - Track consecutive days of chatting with friends (Snapchat-style)
-    ![SignalMe](streaks.PNG)
+    ![SignalMe](streaks.png)
     > Keep the conversation going! Track your daily chat streaks with friends, inspired by Snapchat's engaging streak system.
 
 - **Unread Messages Counter** - Stay updated with unread message counts in chat list
-    ![SignalMe](unread_counts.PNG)
+    ![SignalMe](unread_counts.png)
     > Stay on top of your conversations with dynamic unread message counters. Counts automatically reset upon opening chats.
 
 - **Smart Notifications** - Automatic unread count reset upon opening chats
