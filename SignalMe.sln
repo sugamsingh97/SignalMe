@@ -7,6 +7,20 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalMe", "SignalMe\Signal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignalMe.Client", "SignalMe.Client\SignalMe.Client.csproj", "{F04464D3-B6E0-4D36-A6E7-9A3C3CD13F06}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F72D2153-F001-4E40-9847-AC13B9B009C8}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\OneDrive\Pictures\SignalMe-Images\add_user.PNG = ..\..\..\OneDrive\Pictures\SignalMe-Images\add_user.PNG
+		..\..\..\OneDrive\Pictures\SignalMe-Images\chat_screenshot.PNG = ..\..\..\OneDrive\Pictures\SignalMe-Images\chat_screenshot.PNG
+		..\..\..\OneDrive\Pictures\SignalMe-Images\like_message.PNG = ..\..\..\OneDrive\Pictures\SignalMe-Images\like_message.PNG
+		README.md = README.md
+		..\..\..\OneDrive\Pictures\SignalMe-Images\read_receipts.png = ..\..\..\OneDrive\Pictures\SignalMe-Images\read_receipts.png
+		..\..\..\OneDrive\Pictures\SignalMe-Images\read_status_change.png = ..\..\..\OneDrive\Pictures\SignalMe-Images\read_status_change.png
+		..\..\..\OneDrive\Pictures\SignalMe-Images\sleek_design.PNG = ..\..\..\OneDrive\Pictures\SignalMe-Images\sleek_design.PNG
+		..\..\..\OneDrive\Pictures\SignalMe-Images\streaks.png = ..\..\..\OneDrive\Pictures\SignalMe-Images\streaks.png
+		..\..\..\OneDrive\Pictures\SignalMe-Images\unread_counts.png = ..\..\..\OneDrive\Pictures\SignalMe-Images\unread_counts.png
+		..\..\..\OneDrive\Pictures\SignalMe-Images\uread_receipts.png = ..\..\..\OneDrive\Pictures\SignalMe-Images\uread_receipts.png
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
