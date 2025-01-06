@@ -15,31 +15,14 @@ Experience enterprise-grade real-time communications powered by ASP.NET Core Sig
 ## ✨ Key Features
 
 ### Real-Time Communication
-- **Instant Messaging** - Messages appear instantly in your friend's chat
-    - ![SignalMe](chat_screenshot.PNG)
-    - *Fluid chat interface with instant message delivery and smooth animations. Messages appear in real-time as you type and send.*
-
-- **Live Read Status** - See when your messages are read in real-time
-   - ![SignalMe](read_status_change.png)
-   - *Top: Pending read status | Bottom: Real-time read confirmation*
-   - *Watch the status update instantly when your friend opens your message.*
-
-- **Dynamic Message Updates** - Like messages and see reactions instantly
-    - ![SignalMe](like_message.PNG)
-    - *Express yourself with message reactions. Likes appear instantly on both sides of the conversation.*
+- **Instant Messaging** - Messages appear instantly in your friend's chat 
+- **Live Read Status** - See when your messages are read in real-time  
+- **Dynamic Message Updates** - Like messages and see reactions instantly   
 
 ### Social Features
-- **User Search** - Find and connect with friends via email verification
-   - ![SignalMe](add_user.PNG)
-   - *Find friends securely through email verification. The smart search system only allows connections with existing users.*
-
-- **Streak System** - Track consecutive days of chatting with friends (Snapchat-style)
-   - ![SignalMe](streaks.png)
-   - *Keep the conversation going! Track your daily chat streaks with friends, inspired by Snapchat's engaging streak system.*
-
-- **Unread Messages Counter** - Stay updated with unread message counts in chat list
-   - ![SignalMe](unread_counts.png)
-   - *Stay on top of your conversations with dynamic unread message counters. Counts automatically reset upon opening chats.*
+- **User Search** - Find and connect with friends via email search   
+- **Streak System** - Track consecutive days of chatting with friends (Snapchat-style) 
+- **Unread Messages Counter** - Stay updated with unread message counts in chat list 
 
 ## 🛠️ Technical Stack
 - **Backend**: ASP.NET Core 8
