@@ -12,8 +12,11 @@
 ## 🌟 Overview
 Experience enterprise-grade real-time communications powered by ASP.NET Core SignalR with WebSocket transport. This sophisticated chat platform built with ASP.NET Core 8 and MudBlazor demonstrates high-performance real-time capabilities while combining the most engaging features from Viber and Snapchat. Watch as messages and reactions flow instantly between users through SignalR's robust real-time infrastructure.
 
-- First, install the required NuGet package in the Client project:  
-  ```bash dotnet add package Microsoft.AspNetCore.SignalR.Client ```
+- First, install the required NuGet package in the Client project:
+    
+  ```bash
+  dotnet add package Microsoft.AspNetCore.SignalR.Client
+  ```
 
 ## Server-side Implementation
 - Server-Side Implementation:
