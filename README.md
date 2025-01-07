@@ -10,7 +10,7 @@
 > Experience a modern, intuitive interface powered by MudBlazor components. The clean design ensures seamless navigation and optimal user experience across all devices.
 
 # 🌟 Overview
-Experience enterprise-grade real-time communications powered by ASP.NET Core SignalR with WebSocket transport. This sophisticated chat platform built with ASP.NET Core 8 and MudBlazor demonstrates high-performance real-time capabilities while combining the most engaging features from Viber and Snapchat. Watch as messages and reactions flow instantly between users through SignalR's robust real-time infrastructure.
+Experience real-time communications powered by ASP.NET Core SignalR with WebSocket transport. This chat app is built with ASP.NET Core 8 and MudBlazor demonstrates high-performance real-time capabilities in the form of this simple POC. Watch as messages and reactions flow instantly between users through SignalR's robust real-time infrastructure.
 
 Our application utilizes Identity Core to handle critical aspects such as Authentication, Registration, Profiles, and more. The decision to integrate Identity Core is driven by several key factors:
 
