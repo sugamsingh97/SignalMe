@@ -49,19 +49,19 @@ app.MapHub<ChatHub>("/chathub");
 Establishes connection to ChatHub endpoint
 Initializes during component load
 ```csharp
-	 protected override async Task OnInitializedAsync()
- {
+protected override async Task OnInitializedAsync()
+{
      hubConnection = new HubConnectionBuilder()
          .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
          .Build();
-		 }
+}
 ```
 
 ### 2. Message Flow
 Client invokes hub methods with message data
 ```csharp
-	 private async Task SendMessage()
- {
+private async Task SendMessage()
+{
      if (string.IsNullOrWhiteSpace(messageInput))
      {
          return;
@@ -71,11 +71,11 @@ Client invokes hub methods with message data
          await hubConnection.SendAsync("SendMessage", ReceiverId, messageInput);
          messageInput = string.Empty;
      }
- }
+}
 ```
 Server processes through ChatHub
 ```csharp
- public async Task SendMessage(string receiverId, string content)
+public async Task SendMessage(string receiverId, string content)
 {
     // find existing conversation between the two
     string loggedInUser = await _userService.GetLoggedinUserId();
@@ -106,8 +106,7 @@ Components subscribe to "ReceiveMessage"
 hubConnection.On<ClientMessage>("ReceiveMessage", async (message) =>
 {
     if (message.ConversationId == currentConversationId)
-    {
-        
+    {        
         messages.Add(message);
         await TurnOnReadStatus();
         await LoadMessages();
@@ -126,12 +125,14 @@ Automatic message delivery to relevant users
 ### Real-Time Communication
 - **Instant Messaging** - Messages appear instantly in your friend's chat 
 - **Live Read Status** - See when your messages are read in real-time  
-- **Dynamic Message Updates** - Like messages and see reactions instantly   
+- **Dynamic Message Updates** - Like messages and see reactions instantly
+![SignalMe](read_status_change.png)
 
 ### Social Features
 - **User Search** - Find and connect with friends via email search   
 - **Streak System** - Track consecutive days of chatting with friends (Snapchat-style) 
 - **Unread Messages Counter** - Stay updated with unread message counts in chat list 
+![SignalMe](streaks.png)
 
 ## 🛠️ Technical Stack
 - **Backend**: ASP.NET Core 8
