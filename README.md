@@ -40,7 +40,85 @@ app.MapHub<ChatHub>("/chathub");
 @using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager Navigation
 ```
-## ✨ Key Features
+## Key Features
+	
+### 1. Hub Connection
+Establishes connection to ChatHub endpoint
+Initializes during component load
+```csharp
+	 protected override async Task OnInitializedAsync()
+ {
+     hubConnection = new HubConnectionBuilder()
+         .WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+         .Build();
+		 }
+```
+
+### 2. Message Flow
+Client invokes hub methods with message data
+```csharp
+	 private async Task SendMessage()
+ {
+     if (string.IsNullOrWhiteSpace(messageInput))
+     {
+         return;
+     }
+     if (hubConnection is not null && !string.IsNullOrEmpty(ReceiverId) && !string.IsNullOrEmpty(messageInput))
+     {
+         await hubConnection.SendAsync("SendMessage", ReceiverId, messageInput);
+         messageInput = string.Empty;
+     }
+ }
+```
+Server processes through ChatHub
+```csharp
+ public async Task SendMessage(string receiverId, string content)
+{
+    // find existing conversation between the two
+    string loggedInUser = await _userService.GetLoggedinUserId();
+
+    // if the conversation exists return the conversation
+    var conversation = await _conversationService.FindExistingConversation(loggedInUser, receiverId);
+
+    // if the result is null then create a new conversation
+    if (conversation == null)
+    {
+        conversation = await _conversationService.CreateNewConversation(receiverId);
+    }
+
+    if (conversation != null && conversation.Id != 0)
+    {
+        var message = await _conversationService.CreateMessage(content, conversation.Id);
+        await Clients.Users(new[] { receiverId, message.SenderId }).SendAsync("ReceiveMessage", message);
+        await Clients.Users(new[] { receiverId, message.SenderId }).SendAsync("ConversationUpdated");
+    }
+}
+```
+
+Targeted delivery to subscribed users
+
+### 3. Real-Time Updates
+Components subscribe to "ReceiveMessage"
+```csharp
+hubConnection.On<ClientMessage>("ReceiveMessage", async (message) =>
+{
+    if (message.ConversationId == currentConversationId)
+    {
+        
+        messages.Add(message);
+        await TurnOnReadStatus();
+        await LoadMessages();
+        await InvokeAsync(async () =>
+        {
+            StateHasChanged();
+            await ScrollToBottom();
+        });
+    }
+});
+```
+Instant push notifications from server
+Automatic message delivery to relevant users
+## ✨ App Features
 
 ### Real-Time Communication
 - **Instant Messaging** - Messages appear instantly in your friend's chat 
