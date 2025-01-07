@@ -14,9 +14,7 @@ Experience enterprise-grade real-time communications powered by ASP.NET Core Sig
 ## Server-side Implementation
 - First, install the required NuGet package in the Client project:
 - 
-  ```bash
-dotnet add package Microsoft.AspNetCore.SignalR.Client
-```
+  ```bash dotnet add package Microsoft.AspNetCore.SignalR.Client
 
 - Server-Side Implementation:
 
