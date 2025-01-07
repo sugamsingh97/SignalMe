@@ -14,19 +14,20 @@ Experience enterprise-grade real-time communications powered by ASP.NET Core Sig
 
 Our application utilizes Identity Core to handle critical aspects such as Authentication, Registration, Profiles, and more. The decision to integrate Identity Core is driven by several key factors:
 
-## Security: 
+## Security
 Identity Core provides robust security features, including multi-factor authentication, password hashing, and token generation. These features are crucial for protecting user data and ensuring secure authentication processes.
-## Scalability: 
+## Scalability
 As our user base grows, Identity Core's scalable infrastructure ensures that we can handle increased traffic and user registrations without compromising performance or security.
-## Customizability: 
+## Customizability
 Identity Core offers a high degree of customizability, allowing us to tailor authentication and profile management to meet our specific requirements. This flexibility ensures that our application can adapt to future needs and changes.
-## Seamless Integration: 
+## Seamless Integration
 Integrating Identity Core with our existing framework is straightforward, thanks to its compatibility with .NET and other popular technologies. This ease of integration reduces development time and effort.
-## Community and Support: 
+## Community and Support
 Identity Core is backed by a strong community and extensive documentation, providing us with valuable resources and support. This ensures that we can leverage best practices and stay up-to-date with the latest security standards.
 
 By choosing Identity Core, we ensure that our authentication, registration, and profile management processes are secure, scalable, and adaptable to the evolving needs of our application and users.
 
+# Implementation
 - First, install the required NuGet package in the Client project:
     
   ```bash
